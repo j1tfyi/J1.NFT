@@ -2,17 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
+/* Customize your main colors in :root variables */
+:root {
+  --main-background-color: #000;
+  --card-background-color: #804980;
+  --countdown-background-color: #433765;
+  --main-text-color: #f7f6f4;
+  --title-text-color: #d8b08c;
+}
+
+/* Audiowide Font - Primary font for the site */
+@font-face {
+  font-family: 'Audiowide';
+  src: url('/Audiowide/Audiowide-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
-  padding: 0;
+  background-color: var(--main-background-color);
+  background-size: cover;
+  font-size: 1.1em;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  background-image: radial-gradient(
-    circle farthest-side at 50% 100%,rgba(1, 9, 18, 0),
-    rgba(1, 6, 14, 0.6) 36%,
-    rgba(1, 14, 29, 0.6) 55%,
-    rgba(49, 18, 93, 0.4));
+  font-family: 'Audiowide', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #000;
+  color: #ffffff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Audiowide', sans-serif;
+}
+
+h2,
+p {
+  color: var(--main-text-color);
+}
+
+h3 {
+  font-weight: normal;
+}
+
+/* Ensure buttons and interactive elements also use Audiowide */
+button {
+  font-family: 'Audiowide', sans-serif;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
 }
 
 a {
@@ -24,8 +66,62 @@ a {
   box-sizing: border-box;
 }
 
-/* example: override wallet button style */
-.wallet-adapter-button:not([disabled]):hover {
-  background-color: #707070;
+.wallet-adapter-modal-wrapper {
+  background: rgba(0, 0, 0, 0.8) !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
 }
 
+.wallet-adapter-modal-overlay {
+  background: rgba(0, 0, 0, 0.8) !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+.wallet-adapter-button {
+  background-color: #000000;
+}
+
+.wallet-adapter-modal-list {
+  margin: 0 0 4px !important;
+}
+
+.wallet-adapter-modal-list li:not(:first-of-type) {
+  margin-top: 4px !important;
+}
+
+.wallet-adapter-modal-title {
+  color: #ffffff;
+  font-family: 'Audiowide', sans-serif;
+}
+
+.wallet-adapter-modal {
+  background-color: #000000 !important;
+  border-radius: 8px !important;
+  border: 2px solid #990000 !important;
+}
+
+.wallet-adapter-modal-container {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+.wallet-adapter-modal-wrapper .wallet-adapter-modal-title {
+  color: #ffffff !important;
+}
+
+.wallet-adapter-modal-wrapper p {
+  color: #ffffff !important;
+}
+
+.wallet-adapter-modal-wrapper .wallet-adapter-modal {
+  background-color: #000000 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.wallet-adapter-modal-fade-in {
+  background: inherit !important;
+  background-color: inherit !important;
+}
+
+.wallet-adapter-button:not([disabled]):hover {
+  background-color: #222 !important;
+}
