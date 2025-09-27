@@ -953,7 +953,7 @@ const Home = (props: HomeProps) => {
                   <video
                     style={{
                       maxWidth: "350px",
-                      margin: "0 auto -30px auto",
+                      margin: "-80px auto 20px auto",
                       display: "block",
                     }}
                     src="/logo.MP4"
@@ -965,7 +965,7 @@ const Home = (props: HomeProps) => {
                 </Link>
               </Heading>
 
-              <p style={{ fontSize: '1.2em', fontWeight: 'bold', marginBottom: '10px', marginTop: '10px', color: '#cc0000', textShadow: '0 0 8px rgba(204, 0, 0, 0.5)' }}>
+              <p style={{ fontSize: '1.2em', fontWeight: 'bold', marginBottom: '10px', marginTop: '0px', color: '#cc0000', textShadow: '0 0 8px rgba(204, 0, 0, 0.5)' }}>
                 The J1.NFT Astronaut Collection — Proof of Persistence
               </p>
               
