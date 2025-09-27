@@ -1044,7 +1044,7 @@ const Home = (props: HomeProps) => {
                 <div>
                   <h3 style={{ color: '#cc0000', textShadow: '0 0 8px rgba(204, 0, 0, 0.5)', fontFamily: 'Audiowide, cursive' }}>Built for Resilience</h3>
                   <p>
-                    Premium craft. Permanent proof. Pure persistence.Retry
+                    Premium Craft. Permanent Proof. Pure Persistence.
                   </p>
                   <p style={{ fontStyle: 'italic', marginTop: '10px', color: '#990000' }}>
                     The J1.NFT Astronaut Collection — For Those Who Don&apos;t Quit
