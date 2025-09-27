@@ -69,11 +69,8 @@ import NftsModal from "../../NftsModal";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import useCandyMachineV3 from "../../hooks/useCandyMachineV3";
 import {
-  CustomCandyGuardMintSettings,
-  NftPaymentMintSettings,
   ParsedPricesForUI,
 } from "../../hooks/types";
-import { guardToLimitUtil } from "../../hooks/utils";
 import ogAllowlist from "../../../public/og-allowlist.json";
 import j1tAllowlist from "../../../public/j1t-allowlist.json";
 
@@ -82,6 +79,13 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0 30px;
+  flex-wrap: wrap;
+  gap: 15px;
+
+  @media (max-width: 768px) {
+    padding: 10px 15px;
+    justify-content: center;
+  }
 `;
 
 const HeaderTitle = styled.h1`
@@ -96,6 +100,9 @@ const HeaderTitle = styled.h1`
   @media (max-width: 768px) {
     font-size: 1.2rem;
     letter-spacing: 1px;
+    margin: 10px 0;
+    text-align: center;
+    flex: 1 1 100%;
   }
 `;
 const WalletContainer = styled.div`
@@ -106,6 +113,12 @@ const WalletContainer = styled.div`
   margin: 30px;
   z-index: 999;
   position: relative;
+
+  @media (max-width: 768px) {
+    margin: 10px 0;
+    justify-content: center;
+    flex: 1 1 100%;
+  }
 
   .wallet-adapter-dropdown-list {
     background: #ffffff;
@@ -761,7 +774,7 @@ const Home = (props: HomeProps) => {
   const startMint = useCallback(
     async (quantityString: number = 1) => {
       try {
-        const nftGuards: NftPaymentMintSettings[] = Array(quantityString)
+        const nftGuards: any[] = Array(quantityString)
           .fill(undefined)
           .map((_, i) => {
             return {
@@ -940,6 +953,8 @@ const Home = (props: HomeProps) => {
                   <video
                     style={{
                       maxWidth: "350px",
+                      margin: "0 auto -30px auto",
+                      display: "block",
                     }}
                     src="/logo.MP4"
                     autoPlay
@@ -950,7 +965,7 @@ const Home = (props: HomeProps) => {
                 </Link>
               </Heading>
 
-              <p style={{ fontSize: '1.2em', fontWeight: 'bold', marginBottom: '10px', color: '#cc0000', textShadow: '0 0 8px rgba(204, 0, 0, 0.5)' }}>
+              <p style={{ fontSize: '1.2em', fontWeight: 'bold', marginBottom: '10px', marginTop: '10px', color: '#cc0000', textShadow: '0 0 8px rgba(204, 0, 0, 0.5)' }}>
                 The J1.NFT Astronaut Collection — Proof of Persistence
               </p>
               

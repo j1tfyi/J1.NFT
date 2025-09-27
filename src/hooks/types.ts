@@ -1,14 +1,4 @@
-import {
-  DefaultCandyGuardMintSettings,
-  Metadata,
-  MintLimitGuardSettings,
-  NftBurnGuardMintSettings,
-  NftGateGuardMintSettings,
-  NftPaymentGuardMintSettings,
-  Pda,
-} from "@metaplex-foundation/js";
-import { AccountInfo, PublicKey } from "@solana/web3.js";
-import { MintCounterBorsh } from "../borsh/mintCounter";
+import { PublicKey } from "@solana/web3.js";
 
 export type Token = {
   mint: PublicKey;
@@ -46,7 +36,6 @@ export type TokenPayment$Gate = {
 // } & (SolPayment | TokenPayment | NftPayment);
 
 export type GuardGroup = {
-  // address: PublicKey;
   startTime?: Date;
   endTime?: Date;
   payment?: {
@@ -55,33 +44,26 @@ export type GuardGroup = {
       decimals: number;
     };
     token?: TokenPayment$Gate;
-    nfts?: Metadata[];
+    nfts?: any[];
     requiredCollection?: PublicKey;
   };
   burn?: {
     token?: TokenPayment$Gate;
-    nfts?: Metadata[];
+    nfts?: any[];
     requiredCollection?: PublicKey;
   };
   gate?: {
     token?: TokenPayment$Gate;
-    nfts?: Metadata[];
+    nfts?: any[];
     requiredCollection?: PublicKey;
   };
-  // payments?: PaymentGuard[];
-  mintLimit?: MintLimitLogics;
+  mintLimit?: any;
   redeemLimit?: number;
   allowed?: PublicKey[];
   allowList?: Uint8Array;
   gatekeeperNetwork?: PublicKey;
 };
 
-export type MintLimitLogics = {
-  settings: MintLimitGuardSettings;
-  pda?: Pda;
-  accountInfo?: AccountInfo<Buffer>;
-  mintCounter?: MintCounterBorsh; //MintCounter;
-};
 
 export type GuardGroupStates = {
   isStarted: boolean;
@@ -106,21 +88,9 @@ export type ParsedPricesForUI = {
   gate: PaymentRequired[];
 };
 
-export declare type CustomCandyGuardMintSettings = Partial<
-  DefaultCandyGuardMintSettings & {
-    allowList: {
-      proof: Uint8Array[];
-    };
-  }
->;
 
 export type AllowLists = {
   groupLabel?: string;
   list: (string | Uint8Array)[];
 }[];
 
-export type NftPaymentMintSettings = {
-  payment?: NftPaymentGuardMintSettings;
-  gate?: NftGateGuardMintSettings;
-  burn?: NftBurnGuardMintSettings;
-};

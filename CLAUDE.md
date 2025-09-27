@@ -1,0 +1,1 @@
+- Memory - stop remoiveng Removed solPayment and mintLimit from mintArgs nothing works when you do that and you keep removing the damn things. undo so OG and PUBLIC work again

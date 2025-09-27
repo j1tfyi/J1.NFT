@@ -1,7 +1,6 @@
 /* tslint:disable:no-empty */
 import Link from 'next/link';
-import Text from '../Text';
-import { cn } from '../../utils';
+import { cn } from '../../utils/cn';
 import { useRouter } from 'next/router';
 import { useEffect, useRef } from 'react';
 
@@ -52,7 +51,7 @@ const NavElement = ({
             onClick={() => navigationStarts()}
         >
             <div className="flex flex-row items-center gap-3">
-                <Text variant="nav-heading"> {label} </Text>
+                <span className="text-lg font-medium sm:text-xl"> {label} </span>
             </div>
             <div ref={divRef} />
         </Link>

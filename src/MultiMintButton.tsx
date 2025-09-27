@@ -1,6 +1,5 @@
 import { CircularProgress } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import { CandyMachine } from "@metaplex-foundation/js";
 import { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
@@ -74,11 +73,12 @@ export const NumericField = styled.input`
   padding: 0;
   vertical-align: middle;
   background-color: var(--main-text-color);
+  color: #990000;
   box-shadow: 0px 3px 5px -1px rgb(0 0 0 / 20%),
     0px 6px 10px 0px rgb(0 0 0 / 14%), 0px 1px 18px 0px rgb(0 0 0 / 12%);
   box-sizing: border-box;
   font-family: "Audiowide", sans-serif;
-  font-weight: 500;
+  font-weight: 700;
   line-height: 1px;
   border: none;
   text-align: center;
@@ -121,7 +121,7 @@ export const MultiMintButton = ({
   gatekeeperNetwork,
 }: {
   onMint: (quantityString: number) => Promise<void>;
-  candyMachine: CandyMachine | undefined;
+  candyMachine: any;
   isMinting: boolean;
   setIsMinting: (val: boolean) => void;
   isEnded: boolean;
@@ -139,14 +139,19 @@ export const MultiMintButton = ({
   const limit = useMemo(() => guardStates.canPayFor, [guardStates]);
 
   const totalSolCost = useMemo(
-    () =>
-      prices && prices.payment
-        ? mintCount *
-          (prices.payment
-            .filter(({ kind }) => kind === "sol")
-            .reduce((a, { price }) => a + price, 0) +
-            0.012)
-        : mintCount * 0.012,
+    () => {
+      console.log("MultiMintButton - prices object:", prices);
+      console.log("MultiMintButton - prices.payment:", prices?.payment);
+      const solPayments = prices?.payment?.filter(({ kind }) => kind === "sol") || [];
+      console.log("MultiMintButton - filtered sol payments:", solPayments);
+      const basePrice = solPayments.reduce((a, { price }) => a + price, 0);
+      console.log("MultiMintButton - base price:", basePrice);
+      const total = prices && prices.payment
+        ? mintCount * (basePrice + 0.012)
+        : mintCount * 0.012;
+      console.log("MultiMintButton - total cost:", total);
+      return total;
+    },
     [mintCount, prices]
   );
   const totalTokenCosts = useMemo((): PaymentRequired[] => {

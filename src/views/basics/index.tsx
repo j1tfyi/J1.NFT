@@ -4,7 +4,7 @@ import { SignMessage } from '../../components/SignMessage';
 import { SendTransaction } from '../../components/SendTransaction';
 import { SendVersionedTransaction } from '../../components/SendVersionedTransaction';
 
-export const BasicsView: FC = ({ }) => {
+const BasicsView: FC = ({ }) => {
 
   return (
     <div className="md:hero mx-auto p-4">
@@ -22,3 +22,5 @@ export const BasicsView: FC = ({ }) => {
     </div>
   );
 };
+
+export default BasicsView;

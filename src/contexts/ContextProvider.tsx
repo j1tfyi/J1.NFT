@@ -52,7 +52,7 @@ const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
                 <ReactUIWalletModalProviderDynamic>
                     {children}
                 </ReactUIWalletModalProviderDynamic>
-			</WalletProvider>
+            </WalletProvider>
         </ConnectionProvider>
     );
 };

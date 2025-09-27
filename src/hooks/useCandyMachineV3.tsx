@@ -20,6 +20,7 @@ import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-ad
 import {
   mplCandyMachine,
   mintV2,
+  route,
   fetchCandyMachine,
   getMerkleRoot,
   getMerkleProof,
@@ -286,12 +287,14 @@ export default function useCandyMachineV3Working(
       console.log(`Starting mint: ${quantity} NFTs for ${groupLabel} group`);
 
       // Validate allowlist BEFORE attempting mint
-      if ((groupLabel === "og" || groupLabel === "j1t")) {
+      if (groupLabel === "og" || groupLabel === "j1t") {
         const merkleData = merkles[groupLabel];
         if (!merkleData || merkleData.proof.length === 0) {
           throw new Error(`You are not on the ${groupLabel} allowlist`);
         }
         console.log(`Allowlist validation passed for ${groupLabel}`);
+        console.log(`Merkle root for ${groupLabel}:`, Buffer.from(merkleData.tree).toString('hex'));
+        console.log(`Merkle proof for ${groupLabel}:`, merkleData.proof.map((p: any) => Buffer.from(p).toString('hex')));
       }
 
       try {
@@ -307,52 +310,85 @@ export default function useCandyMachineV3Working(
             const nftMint = generateSigner(umi);
             const mintArgs: any = {};
 
-            // Add allowlist proof if needed
-            if ((groupLabel === "og" || groupLabel === "j1t") && merkles[groupLabel]) {
+            // For allowlist groups, first call route() to store proof in PDA
+            if (groupLabel === "og" || groupLabel === "j1t") {
               const { tree, proof } = merkles[groupLabel];
-              mintArgs.allowList = some({
-                merkleRoot: tree as unknown as Uint8Array,
-                merkleProof: proof as unknown as Uint8Array[]
+
+              console.log(`Calling route instruction to store proof for ${groupLabel}`);
+              console.log(`Merkle root:`, Buffer.from(tree).toString('hex'));
+              console.log(`Merkle proof elements:`, proof.map((p: any) => Buffer.from(p).toString('hex')));
+
+              // Call route instruction to store the proof in a PDA
+              // Convert UmiPublicKey (base58 string) to Uint8Array
+              const merkleRootBytes = Buffer.from(tree);
+              const merkleProofBytes = proof.map((p: any) => Buffer.from(p));
+
+              const routeTx = route(umi, {
+                candyGuard: cgId,
+                candyMachine: cmId,
+                guard: 'allowList',
+                routeArgs: {
+                  path: 'proof',
+                  merkleRoot: merkleRootBytes,
+                  merkleProof: merkleProofBytes,
+                },
+                group: some(groupLabel),
               });
+
+              await routeTx.sendAndConfirm(umi, {
+                confirm: { commitment: 'confirmed' },
+                send: { skipPreflight: false },
+              });
+
+              console.log(`Route instruction successful for ${groupLabel}`);
+
+              // Now add merkleRoot to mintArgs (NOT the proof)
+              mintArgs.allowList = { merkleRoot: tree };
             }
 
-            // Add payment destination
-            mintArgs.solPayment = some({
+            // Add payment destination (required for solPayment guard)
+            // Note: lamports amount is set in the guard config, we only pass destination
+            mintArgs.solPayment = {
               destination: publicKey(creatorWallet.toBase58())
-            });
+            };
+            console.log(`Added solPayment destination:`, creatorWallet.toBase58());
 
             // Add mint limit if applicable
             const limitId = groupLabel === "og" ? 2 :
                             groupLabel === "j1t" ? 3 :
                             groupLabel === "bb" ? 1 : undefined;
             if (limitId) {
-              mintArgs.mintLimit = some({ id: limitId });
+              mintArgs.mintLimit = { id: limitId };
             }
 
-            console.log(`Building mint transaction using UMI's native builder for ${groupLabel} group`);
+            console.log(`Building mint transaction for ${groupLabel} group with mintArgs:`, mintArgs);
+            console.log(`Group parameter:`, groupLabel !== "default" && groupLabel !== "public" ? { value: groupLabel } : undefined);
 
-            // Use UMI's native transaction builder - this is the correct approach
-            const result = await transactionBuilder()
-              .add(setComputeUnitLimit(umi, { units: 800_000 }))
-              .add(setComputeUnitPrice(umi, { microLamports: 5000 }))
+            // Use UMI's native transaction builder - increased compute units for allowlist
+            const tx = transactionBuilder()
+              .add(setComputeUnitLimit(umi, { units: 1_200_000 }))
+              .add(setComputeUnitPrice(umi, { microLamports: 10000 }))
               .add(mintV2(umi, {
                 candyMachine: cmId,
                 candyGuard: cgId,
                 nftMint,
                 collectionMint: publicKey(collectionMint.toBase58()),
                 collectionUpdateAuthority: publicKey(creatorWallet.toBase58()),
-                group: groupLabel !== "default" && groupLabel !== "public" ? some(groupLabel) : undefined,
+                group: groupLabel !== "default" ? some(groupLabel) : undefined,
                 mintArgs,
-              }))
-              .sendAndConfirm(umi, {
-                confirm: { commitment: 'confirmed' },
-                send: { skipPreflight: true }
-              });
+              }));
 
-            const signature = result.signature;
+            const instructions = tx.getInstructions();
+            console.log(`Transaction instructions count: ${instructions.length}`);
+            console.log(`Serialized mintV2 instruction data:`, instructions[2]?.data ? Buffer.from(instructions[2].data).toString('hex') : 'No data');
 
-            console.log(`Mint ${i + 1} successful:`, signature);
-            mintedNfts.push({ mint: nftMint, signature });
+            const result = await tx.sendAndConfirm(umi, {
+              confirm: { commitment: 'confirmed' },
+              send: { skipPreflight: true, maxRetries: 3 },
+            });
+
+            console.log(`Mint ${i + 1} successful, signature:`, Buffer.from(result.signature).toString('base64'));
+            mintedNfts.push({ mint: nftMint, signature: result.signature });
 
             // Brief delay between mints
             if (i < quantity - 1) {
